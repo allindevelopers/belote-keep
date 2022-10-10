@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
-	SafeAreaView,
 	View,
 	Text,
 	FlatList,
