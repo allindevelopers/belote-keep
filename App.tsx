@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import {
 	SafeAreaView,
 	View,
@@ -10,6 +10,7 @@ import {
 	TextInput,
 	Platform,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
 import { randomNumber } from "./utils";
 
@@ -30,12 +31,28 @@ function generateGames() {
 	);
 }
 
+function loadFromStorage() {}
+
 export default function App() {
 	let [games, setGames] = useState(() => generateGames());
 	let flatList = useRef<FlatList>();
 
 	if (playersCount < 2 || playersCount > 4)
 		throw new Error("Wrong players count");
+
+	useEffect(() => {
+		AsyncStorage.getItem("games").then((data) => {
+			if (!data) return;
+			console.warn("Games loaded");
+			setGames(JSON.parse(data));
+		});
+	}, []);
+
+	useEffect(() => {
+		void AsyncStorage.setItem("games", JSON.stringify(games)).then(() => {
+			// console.warn("Games saved");
+		});
+	}, [games]);
 
 	return (
 		<KeyboardAvoidingView
