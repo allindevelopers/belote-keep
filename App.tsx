@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView as SafeAreaViewRNSAC } from "react-native-safe-area-context";
 import {
 	View,
 	Text,
@@ -9,10 +9,13 @@ import {
 	KeyboardAvoidingView,
 	TextInput,
 	Platform,
+	SafeAreaView as SafeAreaViewRN,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
 import { randomNumber } from "./utils";
+
+let SafeAreaView = Platform.OS === "ios" ? SafeAreaViewRN : SafeAreaViewRNSAC;
 
 let playersCount = 2;
 let players = Array.from({ length: playersCount }, (_, i) => `P${i + 1}`);
@@ -55,12 +58,12 @@ export default function App() {
 	}, [games]);
 
 	return (
-		<KeyboardAvoidingView
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
-		>
-			<GameContext.Provider value={setGames}>
-				<SafeAreaView style={tw`h-full bg-gray-100`}>
-					<StatusBar style="auto" />
+		<SafeAreaView style={tw`grow bg-gray-100`}>
+			<StatusBar style="auto" />
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+			>
+				<GameContext.Provider value={setGames}>
 					<FlatList
 						ref={flatList}
 						data={games}
@@ -69,9 +72,9 @@ export default function App() {
 						ListHeaderComponent={ListHeaderComponent}
 						ListFooterComponent={ListFooterComponent}
 					/>
-				</SafeAreaView>
-			</GameContext.Provider>
-		</KeyboardAvoidingView>
+				</GameContext.Provider>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
 	);
 }
 
